@@ -102,7 +102,7 @@ def generate_plot(user_input):
     plt.savefig(img, format='png', bbox_inches='tight')  # Use bbox_inches to ensure everything is included
 
     # Display the plot for debugging
-    # plt.show()
+    plt.show()
 
     img.seek(0)
     plt.close()
@@ -120,6 +120,12 @@ if __name__ == '__main__':
         "Quantity": 2
     }
     ks2_graph = generate_plot(user_input_main)
+
+
+
+
+
+    exit()
     with open('test_plot.png', 'wb') as f:
         f.write(ks2_graph.read())
     print("Plot saved as test_plot.png")
