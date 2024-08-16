@@ -113,9 +113,9 @@ def generate_plot(user_input):
 if __name__ == '__main__':
     # Test/Default values when ran outside Web Application
     user_input_main = {
-        "Initial_KS2_Karmic_Balance": 0,
-        "Quality": 0.5,
-        "Timing": 0.3,
+        "Initial_KS2_Karmic_Balance": -0.2,
+        "Quality": 0.9,
+        "Timing": 0.8,
         "Logistics": 0.7,
         "Quantity": 2
     }
@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
 
 
-
+    # Saving file to output
     exit()
     with open('test_plot.png', 'wb') as f:
         f.write(ks2_graph.read())
