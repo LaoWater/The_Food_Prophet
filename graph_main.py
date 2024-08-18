@@ -42,7 +42,7 @@ def generate_plot(user_input):
     fig, ax = plt.subplots(figsize=(10, 6))
 
     # Set the title of the graph
-    ax.set_title('Kaya Sankhara 2 Analysis \n (The Second Body Conditioner)')
+    ax.set_title('Digestive System Health\n (The Second Body Conditioner - Kaya Sankhara 2)')
 
     # Setting the labels for x and y axes
     ax.set_xlabel('Quantity of Food (0 = None, 2 = Excess)')
