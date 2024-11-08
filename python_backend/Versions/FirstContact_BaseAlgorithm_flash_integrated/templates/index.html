@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Food Prophet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="important">The Food Prophet</h1>
+        <h2 class="important">Digestive System Health</h2>
+        <p><span><em>~The Second Body Conditioner Karmic Balance~<br>(Beginning to end of meal Representation)</em></span></p>
+        <p>We can express the current <strong>Health State of the Digestive System</strong> (although <strong>“Karmic Balance”</strong> is a better word, as it’s more Present-Anchored) in a mathematical function and representation on <strong>Q (Quantity) - Karma (Digestive System Health)</strong> axis.</p>
+        <p>The function studies the effect of a meal, but of course can have multiple inputs (meals) as Q also represents time. For a more accurate representation, time can be expressed as the depth axis.</p>
+        <p>The function takes as input the current Digestive system health and a <strong>Meal (Quality, Timing, Logistics)</strong> parameter.</p>
+        <p>Each parameter is defined on a <strong>[-1,1]</strong> interval, from <strong>Dukkha to Dhamma</strong>. And has a weighted effect on the Output, processed in a Neural Network. Only <strong>Quantity</strong> is defined on <strong>[0,2]</strong> interval, with the key point at <strong>1 - Hara Hachi Bu</strong>. The Function clearly shows a Meal’s effect on <strong>“Kaya Sankhara 2 Karmic Balance”</strong>.</p>
+        <ul class="dictionary">
+            <li><strong>*Dictionary</strong></li>
+            <li>Kaya Sankhara = Body Conditioner</li>
+            <li>Meal.Quality = Dukkha to Dhamma</li>
+            <li>Meal.Timing = Against to In Sync with circadian rhythm and Nature</li>
+            <li>Meal.Logistics = Post Meal full sedentarism To Purpose in Light Movement.</li>
+        </ul>
+        <p>For the sake of simplicity & better initial understanding you can always assume an initial Karmic Balance of <strong>0</strong>. This represents a digestive system that is at a neutral health level—consider, for example, a person who maintains a moderate diet and has not eaten for over 6 hours. The function’s behaviour holds true regardless of the actual initial Karmic Balance.</p>
+
+        <form action="/plot" method="post">
+            <label for="initial_ks2_balance">Initial KS2 Karmic Balance:</label>
+            <input type="number" id="initial_ks2_balance" name="initial_ks2_balance" value="0" step="0.1" min="-1" max="1">
+
+            <label for="quality">Quality:</label>
+            <input type="number" id="quality" name="quality" value="0.6" step="0.1" min="-1" max="1">
+
+            <label for="timing">Timing:</label>
+            <input type="number" id="timing" name="timing" value="0.8" step="0.1" min="-1" max="1">
+
+            <label for="logistics">Logistics:</label>
+            <input type="number" id="logistics" name="logistics" value="-0.3" step="0.1" min="-1" max="1">
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" value="2" step="0.1" min="0" max="2">
+
+            <button type="submit">Generate Plot</button>
+        </form>
+
+        <div class="plot-image">
+            {% if plot_generated %}
+                <img id="plot_image" src="{{ url_for('plot_image') }}" alt="Plot Image">
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
