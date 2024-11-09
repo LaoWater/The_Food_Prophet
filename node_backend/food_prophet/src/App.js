@@ -1,7 +1,7 @@
 // src/App.js
 
 import React from 'react';
-import StomachFullnessGraph from './Components/main_graph';
+import StomachFullnessGraph from './Components/main_orion_webworker';
 import styled from 'styled-components';
 
 const AppContainer = styled.div`

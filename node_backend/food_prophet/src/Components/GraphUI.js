@@ -49,10 +49,11 @@ export const FullnessDisplay = styled.div`
 export const GraphUI = ({ svgRef, fullness, handleEat, handleReset, isPaused, setIsPaused }) => (
   <GraphContainer>
     <h2>Stomach Fullness Over Time</h2>
-    <svg ref={svgRef}></svg>
+    <svg ref={svgRef} width="800" height="400" style={{ background: '#f0f0f0', borderRadius: '10px' }}></svg>
     <Controls>
       <button onClick={() => handleEat(0.1)} bgColor="#2196F3" hoverColor="#1976D2">Eat Small Meal (+0.1)</button>
-      <button onClick={() => handleEat(0.3)} bgColor="#FF5722" hoverColor="#E64A19">Eat Big Meal (+0.3)</button>
+      <button onClick={() => handleEat(0.3)} bgColor="#FF5722" hoverColor="#E64A19">Eat Medium Meal (+0.3)</button>
+      <button onClick={() => handleEat(0.7)} bgColor="#FF5722" hoverColor="#E64A19">Eat Big Meal (+0.7)</button>
       <button onClick={() => setIsPaused(!isPaused)} bgColor="#9E9E9E" hoverColor="#757575">
         {isPaused ? 'Resume' : 'Pause'}
       </button>

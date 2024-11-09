@@ -2,17 +2,35 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { GraphUI } from './GraphUI';
+import { GraphUI } from '../GraphUI';
+
+class Meal {
+  constructor(beta) {
+    this.beta = beta; // Food quantity
+    this.age = 0; // Age in hours since the meal was eaten
+  }
+
+  // Calculate decay contribution based on age, decaying faster initially
+  decayContribution() {
+    return this.beta / Math.max(this.age, 1);
+  }
+
+  // Increment the age of the meal over time
+  updateAge() {
+    this.age += 0.1; // Increment age by 0.1 hours (6 minutes)
+  }
+}
 
 const StomachFullnessGraph = () => {
-  // State variables for data points, fullness, time, and pause status
+  // State variables for tracking fullness, time, pause status, and active meals
   const [data, setData] = useState([{ time: 0, fullness: 0.5 }]);
-  const [fullness, setFullness] = useState(0.5); // Initial fullness level
-  const svgRef = useRef(); // Reference to the SVG for D3 manipulations
-  const [time, setTime] = useState(0); // Time variable to track simulation progress
-  const [isPaused, setIsPaused] = useState(false); // Pause state
+  const [fullness, setFullness] = useState(0.5);
+  const svgRef = useRef();
+  const [time, setTime] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [meals, setMeals] = useState([]); // Track all meals
 
-  // Initialize SVG element with D3 and set up gradients and axes
+  // Initialize SVG with D3
   useEffect(() => {
     const svg = d3.select(svgRef.current)
       .attr('viewBox', '0 0 800 400')
@@ -20,7 +38,6 @@ const StomachFullnessGraph = () => {
       .style('background', '#f0f0f0')
       .style('border-radius', '10px');
 
-    // Define a clipping path to restrict graph overflow
     svg.append('defs').append('clipPath')
       .attr('id', 'clip')
       .append('rect')
@@ -28,7 +45,6 @@ const StomachFullnessGraph = () => {
       .attr('height', 300)
       .attr('transform', 'translate(50,50)');
 
-    // Create a gradient for the line that changes color based on fullness
     svg.append('linearGradient')
       .attr('id', 'line-gradient')
       .attr('gradientUnits', 'userSpaceOnUse')
@@ -38,14 +54,13 @@ const StomachFullnessGraph = () => {
       .attr('y2', 400)
       .selectAll('stop')
       .data([
-        { offset: '0%', color: '#d50000' }, // Green at 0% fullness
-        { offset: '100%', color:  '#00c853' } // Red at 100% fullness
+        { offset: '0%', color: '#d50000' },
+        { offset: '100%', color: '#00c853' }
       ])
       .enter().append('stop')
       .attr('offset', d => d.offset)
       .attr('stop-color', d => d.color);
 
-    // Append x and y axes groups to the SVG
     svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', 'translate(0,350)');
@@ -55,51 +70,58 @@ const StomachFullnessGraph = () => {
       .attr('transform', 'translate(50,0)');
   }, []);
 
-  // Updates data over time, reducing fullness at a set digestion rate
+  // Manage fullness over time with active meals and decay
   useEffect(() => {
-    if (isPaused) return; // Skip update if paused
+    if (isPaused) return;
 
     const interval = setInterval(() => {
       setTime(prevTime => {
-        const newTime = +(prevTime + 0.1).toFixed(1); // Increase time by 0.1 each interval
+        const newTime = +(prevTime + 0.1).toFixed(1);
 
-        // Update fullness level with digestion effect
-        setFullness(prevFullness => {
-          const digestionRate = 0.005; // Fullness decrease rate
-          const newFullness = Math.max(prevFullness - digestionRate, 0); // Ensure fullness doesn't go below 0
+        // Update meal ages and remove meals older than 12 hours
+        setMeals(currentMeals => {
+          const updatedMeals = currentMeals.map(meal => {
+            meal.updateAge();
+            return meal;
+          }).filter(meal => meal.age <= 12);
 
-          // Add new data point to data array, keeping the array within 100 items
+          // Calculate total fullness (lambda) based on active meals
+          const newFullness = updatedMeals.reduce(
+            (total, meal) => total + meal.decayContribution(),
+            0
+          );
+
+          // Add new data point and update fullness state
           setData(prevData => {
             const newData = [...prevData, { time: newTime, fullness: newFullness }];
             return newData.length > 100 ? newData.slice(newData.length - 100) : newData;
           });
 
-          return newFullness;
+          setFullness(newFullness);
+          return updatedMeals;
         });
 
         return newTime;
       });
-    }, 200); // 200ms interval
+    }, 300); // Update every 6 minutes (0.1 hours)
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
+    return () => clearInterval(interval);
   }, [isPaused]);
 
-  // Update the graph each time data or time changes
+  // Update D3 graph each time data or time changes
   useEffect(() => {
     if (data.length === 0) return;
 
     const svg = d3.select(svgRef.current);
 
-    // Define scales for x and y axes
     const xScale = d3.scaleLinear()
-      .domain([Math.max(0, time - 50), time + 10]) // Shows last 50 units of time
+      .domain([Math.max(0, time - 50), time + 10])
       .range([50, 750]);
 
     const yScale = d3.scaleLinear()
-      .domain([0, 1]) // Fullness ranges from 0 to 1
+      .domain([0, 1])
       .range([350, 50]);
 
-    // Update axes with animations
     svg.select('.x-axis')
       .transition()
       .duration(500)
@@ -112,13 +134,11 @@ const StomachFullnessGraph = () => {
       .ease(d3.easeLinear)
       .call(d3.axisLeft(yScale).ticks(5));
 
-    // Define the line for the graph
     const line = d3.line()
       .x(d => xScale(d.time))
       .y(d => yScale(d.fullness))
       .curve(d3.curveMonotoneX);
 
-    // Select or create the group to contain the line graph
     const graph = svg.selectAll('.graph').data([null]);
     const graphEnter = graph.enter().append('g')
       .attr('class', 'graph')
@@ -126,11 +146,9 @@ const StomachFullnessGraph = () => {
 
     const graphMerge = graphEnter.merge(graph);
 
-    // Bind data to the line and update the path
     const path = graphMerge.selectAll('.line')
       .data([data]);
 
-    // Enter and merge phases for line path updates
     path.enter()
       .append('path')
       .attr('class', 'line')
@@ -141,32 +159,23 @@ const StomachFullnessGraph = () => {
       .transition()
       .ease(d3.easeLinear)
       .duration(500)
-      .attr('d', line); // Update path with new data
+      .attr('d', line);
 
-    // Remove old paths no longer needed
     path.exit().remove();
   }, [data, time]);
 
-  // Handler to increase fullness when eating a meal
+  // Handler to add a meal with given fullness value
   const handleEat = (amount) => {
-    setFullness(prevFullness => {
-      const updatedFullness = Math.min(prevFullness + amount, 1); // Cap fullness at 1
-
-      setData(prevData => {
-        const newData = [...prevData, { time: time, fullness: updatedFullness }];
-        return newData.length > 100 ? newData.slice(newData.length - 100) : newData;
-      });
-
-      return updatedFullness;
-    });
+    const newMeal = new Meal(amount);
+    setMeals([...meals, newMeal]);
   };
 
-  // Handler to reset the graph and variables to initial state
   const handleReset = () => {
-    setData([{ time: 0, fullness: 0.5 }]); // Reset data to initial point
-    setFullness(0.5); // Set fullness back to starting value
-    setTime(0); // Reset time
-    setIsPaused(false); // Unpause if paused
+    setData([{ time: 0, fullness: 0.5 }]);
+    setFullness(0.5);
+    setTime(0);
+    setMeals([]);
+    setIsPaused(false);
   };
 
   // Render the UI using the separated GraphUI component
