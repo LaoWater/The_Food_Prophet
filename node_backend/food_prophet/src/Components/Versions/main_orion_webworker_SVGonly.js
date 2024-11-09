@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { GraphUI } from './GraphUI';
+import { GraphUI } from '../GraphUI';
 
 const StomachFullnessGraph = () => {
   const [data, setData] = useState([{ time: 0, fullness: 0 }]);
