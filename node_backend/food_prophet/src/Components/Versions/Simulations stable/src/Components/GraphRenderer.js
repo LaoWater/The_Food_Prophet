@@ -3,6 +3,12 @@
 import { useEffect } from 'react';
 import * as d3 from 'd3';
 
+const timeToLabel = (hour) => {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const adjustedHour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
+  return `${adjustedHour} ${period}`;
+};
+
 const GraphRenderer = ({ svgRef, data, time }) => {
 
   // 1. Initialize the SVG with D3 and set up gradients, axes, and labels
@@ -45,30 +51,33 @@ const GraphRenderer = ({ svgRef, data, time }) => {
       .attr('class', 'x-label')
       .attr('text-anchor', 'end')
       .attr('x', 750)
-      .attr('y', 380)
-      .text('Time (Hours)')
-      .style('font-size', '12px')
-      .style('fill', '#555');
+      .attr('y', 390)
+      .text('Time')
+      .style('font-size', '13px')
+      .style('fill', '#555')
+      .style('font-weight', 'bold'); // Make text bold
 
     svg.append('text')
       .attr('class', 'y-label')
       .attr('text-anchor', 'end')
-      .attr('x', -30)
-      .attr('y', 15)
-      .attr('transform', 'rotate(-90)')
+      .attr('x', 93)
+      .attr('y', 25)
+      //.attr('transform', 'rotate(-90)')
       .text('Fullness Level')
-      .style('font-size', '12px')
-      .style('fill', '#555');
+      .style('font-size', '13px')
+      .style('fill', '#555')
+      .style('font-weight', 'bold'); // Make text bold
+
 
     console.log('D3 SVG initialized.');
   }, [svgRef]);
 
+  // 2. Update the graph with new data
   useEffect(() => {
     if (data.length === 0) {
       console.warn('Data array is empty. Skipping graph update.');
       return;
     }
-
 
     const svg = d3.select(svgRef.current);
 
@@ -80,30 +89,26 @@ const GraphRenderer = ({ svgRef, data, time }) => {
       .domain([0, 1]) // Fullness ranges from 0 to 1
       .range([350, 50]);
 
-    // Append x and y axes if not already present
-    if (svg.select('.x-axis').empty()) {
-      svg.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', 'translate(0, 350)');
-    }
-
-    if (svg.select('.y-axis').empty()) {
-      svg.append('g')
-        .attr('class', 'y-axis')
-        .attr('transform', 'translate(50, 0)');
-    }
+    // Custom x-axis with time labels in 12-hour format
+    const xAxis = d3.axisBottom(xScale)
+      .ticks(10)
+      .tickFormat((d) => {
+        const hour = (6 + d) % 24; // Offset by 6 to start from 6 AM
+        return timeToLabel(hour);
+      });
 
     svg.select('.x-axis')
       .transition()
       .duration(500)
       .ease(d3.easeLinear)
-      .call(d3.axisBottom(xScale).ticks(10));
+      .call(xAxis);
 
+    const yAxis = d3.axisLeft(yScale).ticks(5);
     svg.select('.y-axis')
       .transition()
       .duration(500)
       .ease(d3.easeLinear)
-      .call(d3.axisLeft(yScale).ticks(5));
+      .call(yAxis);
 
     const line = d3.line()
       .x(d => xScale(d.time))

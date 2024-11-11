@@ -15,6 +15,8 @@ const StomachFullnessGraph = ({ archetype = 'ModernMan' }) => {
   const isPageActive = usePageActivity(); // Custom hook to track page activity
   const workerRef = useRef(null);
   const [data, setData] = useState([{ time: 0, fullness: 0 }]);
+  const [speedMultiplier, setSpeedMultiplier] = useState(3600); // Track current speed multiplier, default speed 3600x Reality, 1 simulation hour = 1 Real second
+
   
    // 1. Load data from localStorage on mount
    useEffect(() => {
@@ -29,65 +31,78 @@ const StomachFullnessGraph = ({ archetype = 'ModernMan' }) => {
     }
   }, []);
 
-  // 2. Initialize the worker
-  useEffect(() => {
-    console.log('Initializing web worker.');
-    workerRef.current = new Worker(new URL('../workers/fullnessWorker.js', import.meta.url));
+// Initialize the worker
+useEffect(() => {
+  console.log('Initializing web worker.');
+  workerRef.current = new Worker(new URL('../workers/fullnessWorker.js', import.meta.url));
 
-    // Receive updates from the worker
-    workerRef.current.onmessage = (event) => {
-      const { type, time: workerTime, fullness: workerFullness, data: workerData } = event.data;
-      console.log('Message received from worker:', event.data);
+  // Receive updates from the worker
+  workerRef.current.onmessage = (event) => {
+    const { type, time: workerTime, fullness: workerFullness, data: workerData } = event.data;
+    // console.log('Message received from worker:', event.data);
 
-      if (type === 'STORE_DATA') {
+    switch (type) {
+      case 'STORE_DATA':
         localStorage.setItem('fullnessData', JSON.stringify(workerData));
         console.log('Data stored to localStorage by worker:', workerData);
-      } else if (type === 'RESET_COMPLETE') {
+        break;
+      case 'RESET_COMPLETE':
         setData([{ time: 0, fullness: 0 }]);
         setFullness(0);
         setTime(0);
         console.log('Data and state reset complete.');
-      } else {
+        break;
+      case 'UPDATE_DATA':
         setTime(workerTime);
         setFullness(workerFullness);
-        console.log(`Updating state: time=${workerTime}, fullness=${workerFullness}`);
 
         setData((prevData) => {
           const newData = [...prevData, { time: workerTime, fullness: workerFullness }];
-          console.log('New data length:', newData.length);
-          const weeklyThreshold = 2200; // Adjust based on data frequency
-          console.log('Weekly threshold set to:', weeklyThreshold);
+          const weeklyThreshold = 2200;
 
           if (newData.length > weeklyThreshold) {
             const trimmedData = newData.slice(newData.length - weeklyThreshold);
-            console.log(`Data exceeds threshold. Trimming data. New data length: ${trimmedData.length}`);
             return trimmedData;
           }
 
           return newData;
         });
-      }
+        break;
+      default:
+        console.warn('Unknown message type from worker:', type);
+    }
 
-      // Set worker as ready after receiving the first data point
-      if (!isWorkerReady) {
-        setIsWorkerReady(true);
-        console.log('Worker is ready.');
-      }
-    };
+    // Set worker as ready after receiving the first data point
+    if (!isWorkerReady) {
+      setIsWorkerReady(true);
+      console.log('Worker is ready.');
+    }
+  };
 
-    // Handle worker errors
-    workerRef.current.onerror = (error) => {
-      console.error('Error in web worker:', error);
-    };
+  // Handle worker errors
+  workerRef.current.onerror = (error) => {
+    console.error('Error in web worker:', error);
+  };
 
-    // Cleanup on component unmount
-    return () => {
-      if (workerRef.current) {
-        workerRef.current.terminate(); // Clean up the worker on component unmount
-        console.log('Web worker terminated.');
-      }
-    };
-  }, [isWorkerReady]); // Depend only on isWorkerReady
+  // Cleanup on component unmount
+  return () => {
+    if (workerRef.current) {
+      workerRef.current.terminate();
+      console.log('Web worker terminated.');
+    }
+  };
+}, [isWorkerReady]);
+
+// Function to adjust simulation speed
+const adjustSpeed = (multiplier) => {
+  const newMultiplier = speedMultiplier * multiplier;
+  setSpeedMultiplier(newMultiplier);
+
+  // Send new speed multiplier to the worker
+  if (workerRef.current) {
+    workerRef.current.postMessage({ type: 'SET_SPEED', multiplier: newMultiplier });
+  }
+};
 
   // 3. Initialize the Archetype simulator after the worker is set up
   useEffect(() => {
@@ -95,6 +110,9 @@ const StomachFullnessGraph = ({ archetype = 'ModernMan' }) => {
       simulatorRef.current = new ArchetypeSimulator(workerRef.current);
       simulatorRef.current.startSimulation(archetype || 'ModernMan'); // Default to ModernMan if not provided
       console.log('Archetype simulation started for Modern Man.');
+
+      // Set initial speed multiplier in simulator
+      simulatorRef.current.setSpeedMultiplier(speedMultiplier);
     }
 
     // Cleanup on component unmount or when paused
@@ -104,7 +122,7 @@ const StomachFullnessGraph = ({ archetype = 'ModernMan' }) => {
         console.log('Archetype simulation stopped.');
       }
     };
-  }, [isWorkerReady, isPaused, archetype]);
+  }, [isWorkerReady, isPaused, archetype, speedMultiplier]);
 
 
   // 4. Handler to add a meal
@@ -151,23 +169,26 @@ const StomachFullnessGraph = ({ archetype = 'ModernMan' }) => {
     }
   };
 
-  return (
-    <>
-      {isPageActive.current && (
-        <GraphUI 
-          svgRef={svgRef} 
-          fullness={fullness} 
-          handleEat={handleEat} 
-          handleReset={handleReset} 
-          isPaused={isPaused} 
-          handlePauseResume={handlePauseResume} 
-          data={data}
-          time={time}
-          archetype={archetype} // Pass archetype here
-        />
-      )}
-    </>
-  );
+return (
+  <>
+    {isPageActive.current && (
+      <GraphUI 
+        svgRef={svgRef} 
+        fullness={fullness} 
+        handleEat={handleEat} 
+        handleReset={handleReset} 
+        isPaused={isPaused} 
+        handlePauseResume={handlePauseResume} 
+        data={data}
+        time={time}
+        archetype={archetype} // Pass archetype here
+        speedMultiplier={speedMultiplier} // Display current speed multiplier
+        adjustSpeed={adjustSpeed} // Function to adjust speed
+      />
+    )}
+  </>
+);
+
 };
 
 export default StomachFullnessGraph;

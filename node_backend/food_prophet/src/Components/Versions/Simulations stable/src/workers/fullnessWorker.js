@@ -1,10 +1,19 @@
 // src/workers/fullnessWorker.js
+// Run simulation every simulationSpeed ms. Together with function_time_scale, it will give rise to simulation speed compared to Reality.
+// Eg. Match Reality with 0.2s simulation run speed. 5.555555555555556e-5;
+// Eg. Advance time by 0.01*h(hours). Simulating per 0.1 seconds (current simulation time dimension), 5x Reality
+// a 0.01*h increase = 36 secondds, 36x Reality
+// To Match reality, no need to infere simulation speed, as this is kept for offering graph Flow, But can match it using function_time_scale variable. In this example, it would mean decreasing 0.01 by (5x36)
+// Function to calculate meal contribution using exponential decay
+
+// src/workers/fullnessWorker.js
 
 let time = 0;
 let fullness = 0;
 let meals = []; // Store meal data
 const simulationSpeed = 100; // Interval in ms for simulation updates
-const functionTimeScale = 0.07; // Scales time increments for simulation
+let functionTimeScale = 0.1; // Initial time scale for simulation (controls speed relative to reality)
+let speedMultiplier = 1; // Default speed multiplier
 
 let isPaused = false;
 let intervalId = null; // To store the interval ID
@@ -21,15 +30,12 @@ function updateFullness() {
     return; // Do not proceed if paused
   }
 
-  time = +(time + functionTimeScale).toFixed(5); // Advance time based on scale
-  console.log("Current Time (Simulated Hour):", time);
+  // Scale time increment based on functionTimeScale and speedMultiplier
+  time = +(time + functionTimeScale).toFixed(5); // Advance time based on the scaled time
+  console.log("Current Time (Worker Simulation Hour):", time);
 
   // Remove meals older than 12 simulated hours
-  meals = meals.filter(meal => {
-    const isRecent = (time - meal.timeEaten) < 12;
-    // console.log(`Meal at time(hour) ${meal.timeEaten} is ${isRecent ? "still contributing" : "cleared from digestive system"}`);
-    return isRecent;
-  });
+  meals = meals.filter(meal => (time - meal.timeEaten) < 12);
 
   // Calculate fullness as the sum of all meal contributions
   let newFullness = 0;
@@ -47,7 +53,7 @@ function updateFullness() {
   console.log("Calculated Fullness:", fullness);
 
   // Send the updated time and fullness back to the main thread
-  postMessage({ time, fullness });
+  postMessage({ type: 'UPDATE_DATA', time, fullness, data: meals });
 }
 
 // Function to start the simulation interval
@@ -70,9 +76,9 @@ function stopSimulation() {
 // Start the simulation initially
 startSimulation();
 
-// Listen for messages from the main thread (e.g., to add meals, reset, pause, resume)
+// Listen for messages from the main thread (e.g., to add meals, reset, pause, resume, set speed)
 onmessage = function(e) {
-  const { type, amount } = e.data;
+  const { type, amount, multiplier } = e.data;
 
   if (type === 'ADD_MEAL') {
     meals.push({ beta: amount, timeEaten: time });
@@ -83,15 +89,18 @@ onmessage = function(e) {
     meals = [];
     postMessage({ type: 'RESET_COMPLETE' });
     console.log('Worker reset.');
-  }
-  else if (type === 'PAUSE') {
+  } else if (type === 'PAUSE') {
     console.log('Worker PAUSED!');
     isPaused = true;
     stopSimulation(); // Stop the interval when paused
-    console.log('Worker paused.');
   } else if (type === 'RESUME') {
     isPaused = false;
     startSimulation(); // Restart the interval when resumed
     console.log('Worker resumed.');
+  } else if (type === 'SET_SPEED') {
+    // Adjust functionTimeScale based on the new multiplier
+    speedMultiplier = multiplier / 3600; // Normalize value
+    functionTimeScale = 0.07 / speedMultiplier; // Update time scale based on speed multiplier
+    console.log(`Updated simulation speed: multiplier=${speedMultiplier}, functionTimeScale=${functionTimeScale}`);
   }
 };
