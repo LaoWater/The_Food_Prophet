@@ -106,8 +106,8 @@ function App() {
                   {archetypes.map((archetype, index) => (
                     <GraphWrapper key={index}>
                       <h2>Simulation #{index + 1}</h2>
-                      <StomachFullnessGraph archetype={archetype} />
-                </GraphWrapper>
+                      <StomachFullnessGraph archetype={archetype || "ModernMan"} />
+                    </GraphWrapper>
                 ))
                 /* <GraphWrapper>
                   <h2>Simulation #2</h2>
