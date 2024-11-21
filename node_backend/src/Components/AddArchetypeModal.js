@@ -84,7 +84,6 @@ const Slider = styled.input`
   }
 `;
 
-
 const Button = styled.button`
   margin-top: 10px;
   background-color: #4CAF50;
@@ -98,6 +97,51 @@ const Button = styled.button`
   text-align: center;
 `;
 
+const LoadingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  color: white;
+`;
+
+const LoadingContent = styled.div`
+  text-align: center;
+  font-size: 1.2rem;
+  line-height: 2;
+`;
+
+const LoadingImage = styled.div`
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0.95);
+      opacity: 0.5;
+    }
+  }
+`;
+
 const AddArchetypeModal = ({ isOpen, onClose, onSave }) => {
   const [newArchetype, setNewArchetype] = useState({
     name: '',
@@ -108,8 +152,7 @@ const AddArchetypeModal = ({ isOpen, onClose, onSave }) => {
     fullSedentarismStartHour: 0,
     fullSedentarismEndHour: 23,
   });
-
-  if (!isOpen) return null;
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field, value) => {
     setNewArchetype((prev) => ({
@@ -138,13 +181,30 @@ const AddArchetypeModal = ({ isOpen, onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    // Simulate some processing time
+    await new Promise(resolve => setTimeout(resolve, 3000));
     onSave(newArchetype);
+    setIsLoading(false);
     onClose();
   };
 
+  if (!isOpen) return null;
+
   return (
     <ModalBackground>
+      {isLoading && (
+        <LoadingOverlay>
+          <LoadingImage />
+          <LoadingContent>
+            <p>Generating...</p>
+            <p>Calculating Food blueprints...</p>
+            <p>Calculating Digestion rate...</p>
+            <p>Integrating with circadian rhythm...</p>
+          </LoadingContent>
+        </LoadingOverlay>
+      )}
       <ModalContent>
         <h3>Add New Archetype</h3>
         <Label>Archetype Name:</Label>

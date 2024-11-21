@@ -1,89 +1,90 @@
 // src/App.js
 
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import styled from 'styled-components';
+import {
+  Header,
+  Logo,
+  NavLinks,
+  NavLink,
+} from './styles/HeaderStyles';
+import {
+  GraphsContainer,
+  GraphWrapper,
+} from './styles/GraphStyles';
+import {
+  AddButton,
+  CloseButton,
+} from './styles/ButtonStyles';
 import StomachFullnessGraph from './Components/StomachFullness_Graph';
-import AddArchetypeModal from './Components/AddArchetypeModal'; // Import the modal component
+import AddArchetypeModal from './Components/AddArchetypeModal';
+import DigestiveHealth from './Components/DigestiveHealth'; // Import the new component
+import QuoteComponent from './Components/QuoteComponent';
+
+
 
 // Styled components
 const AppContainer = styled.div`
-  width: 58%;
-  padding: 20px;
-  margin: 0 auto;
-  text-align: center;
-`;
-
-const Header = styled.header`
-  background-color: #0a2540; /* Dark shade of blue */
-  color: #f5f5f5; /* Light white color */
-  padding: 20px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-`;
-
-const NavLinks = styled.div`
-  display: flex;
-  gap: 40px; /* Space between links */
-`;
-
-const NavLink = styled(Link)`
-  color: #f5f5f5;
-  text-decoration: none;
-  font-size: 1.2rem;
-  padding: 8px 12px;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #ffffff;
-  }
-`;
-
-const GraphsContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr; // Two columns for graphs
-  gap: 10px;
-  justify-items: center; // Center-align the graphs horizontally
-  margin-top: 20px;
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr; // Stack graphs on smaller screens
-  }
-`;
-
-const GraphWrapper = styled.div`
   width: 100%;
-  max-width: 900px; // Limit maximum width for each graph
+  min-height: 100vh;
+  padding: 0px;
+  text-align: center;
+  position: relative; /* Required for pseudo-elements */
+  overflow: hidden;
+
+  /* Background handled by pseudo-element */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(to bottom, rgba(51, 51, 51, 1), rgba(51, 51, 51, 0.7), rgba(0, 0, 0, 0.7)), /* Dark gradient blending */
+      url("/white_lotus.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Parallax effect */
+    filter: brightness(1) blur(0px); /* Optional brightness and blur */
+    z-index: -1; /* Ensures it's behind all content */
+  }
 `;
 
-const AddButton = styled.button`
-  margin: 20px;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
+
+const ContentWrapper = styled.div`
+  margin-top: 70px; /* Add margin to compensate for the fixed header */
+  text-align: center; /* Ensures children like buttons are centered */
 `;
+
 
 function App() {
-  const [archetypes, setArchetypes] = useState([{ name: "ModernMan" }]);
+  const [archetypes, setArchetypes] = useState([{ name: 'ModernMan' }]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleSaveArchetype = (newArchetype) => {
-    console.log("New Archetype Data:", newArchetype);
+    console.log('New Archetype Data:', newArchetype);
     setArchetypes((prevArchetypes) => [...prevArchetypes, newArchetype]);
+  };
+
+  const handleRemoveArchetype = (indexToRemove) => {
+    setArchetypes((prevArchetypes) =>
+      prevArchetypes.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   return (
     <Router>
       <AppContainer>
+        {/* Quote Component */}
+        <QuoteComponent />
         {/* Header with Navigation Links */}
         <Header>
+          <Logo>The Food Prophet</Logo>
           <NavLinks>
             <NavLink to="/">Stomach Fullness Tracker</NavLink>
             <NavLink to="/digestive-health">Digestive System Health</NavLink>
@@ -91,43 +92,42 @@ function App() {
         </Header>
 
         {/* Main Content */}
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <AddButton onClick={handleOpenModal}>Add Archetype</AddButton>
-                <AddArchetypeModal 
-                  isOpen={isModalOpen} 
-                  onClose={handleCloseModal} 
-                  onSave={handleSaveArchetype} 
-                />
-                <GraphsContainer>
-                  {archetypes.map((archetype, index) => (
-                    <GraphWrapper key={index}>
-                      <h2>Simulation #{index + 1}</h2>
-                      <StomachFullnessGraph archetype={archetype || "ModernMan"} />
-                    </GraphWrapper>
-                ))
-                /* <GraphWrapper>
-                  <h2>Simulation #2</h2>
-                  <StomachFullnessGraph archetype="PonPon" />
-                </GraphWrapper>
-                <GraphWrapper>
-                  <h2>Simulation #3</h2>
-                  <StomachFullnessGraph archetype="Lao" />
-                </GraphWrapper>
-                <GraphWrapper>
-                  <h2>Simulation #4</h2>
-                  <StomachFullnessGraph archetype="Custom" />
-                </GraphWrapper> */
+        <ContentWrapper>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <AddButton onClick={handleOpenModal}>Add Archetype</AddButton>
+                  <AddArchetypeModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onSave={handleSaveArchetype}
+                  />
+                  <GraphsContainer graphCount={archetypes.length}>
+                    {archetypes.map((archetype, index) => (
+                      <GraphWrapper key={index}>
+                        <CloseButton
+                          onClick={() => handleRemoveArchetype(index)}
+                        >
+                          &times;
+                        </CloseButton>
+                        <h2>Simulation #{index + 1}</h2>
+                        <StomachFullnessGraph
+                          archetype={archetype || 'ModernMan'}
+                        />
+                      </GraphWrapper>
+                    ))}
+                  </GraphsContainer>
+                </>
               }
-              </GraphsContainer>
-              </>
-            }
-          />
-          <Route path="/digestive-health" element={<div>Coming Soon: Digestive System Health</div>} />
-        </Routes>
+            />
+            <Route
+              path="/digestive-health"
+              element={<DigestiveHealth />} // "Coming Soon" Page
+            />
+          </Routes>
+        </ContentWrapper>
       </AppContainer>
     </Router>
   );
