@@ -100,7 +100,8 @@ onmessage = function(e) {
   } else if (type === 'SET_SPEED') {
     // Adjust functionTimeScale based on the new multiplier
     speedMultiplier = multiplier / 3600; // Normalize value
-    functionTimeScale = 0.07 / speedMultiplier; // Update time scale based on speed multiplier
+    const computing_offset = 0.03 // Computation offset to balance time speed to 100 ms initially
+    functionTimeScale = 0.1 / speedMultiplier - computing_offset; // Update time scale based on speed multiplier
     console.log(`Updated simulation speed: multiplier=${speedMultiplier}, functionTimeScale=${functionTimeScale}`);
   }
 };

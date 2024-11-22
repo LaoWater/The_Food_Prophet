@@ -112,7 +112,7 @@ const adjustSpeed = (multiplier) => {
       console.log('Archetype simulation started for:', archetype.name);
 
       // Set initial speed multiplier in simulator
-      simulatorRef.current.setSpeedMultiplier(speedMultiplier);
+      simulatorRef.current.setSpeedMultiplier(3600);
     }
 
     // Cleanup on component unmount or when paused
@@ -122,7 +122,15 @@ const adjustSpeed = (multiplier) => {
         console.log('Archetype simulation stopped.');
       }
     };
-  }, [isWorkerReady, isPaused, archetype, speedMultiplier]);
+  }, [isWorkerReady, isPaused, archetype]);
+
+  useEffect(() => {
+    if (simulatorRef.current && !isPaused) {
+      simulatorRef.current.setSpeedMultiplier(speedMultiplier);
+      console.log('Simulation speed adjusted to:', speedMultiplier);
+    }
+  }, [speedMultiplier, isPaused]);
+
 
   // 4. Handler to add a meal
   const handleEat = (amount) => {

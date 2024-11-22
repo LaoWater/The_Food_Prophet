@@ -5,24 +5,27 @@ const TIME_ACCELERATION = 1000; // 1000 ms = 1 simulated hour
 // Configuration for different archetypes
 const archetypeConfig = {
   ModernMan: {
-    start_eating_hour: 6,
-    end_eating_hour: 22,
+    name: "ModernMan",
+    startEatingHour: 6,
+    stopEatingHour: 22,
     mealInterval: 1.5,
     fullSedentarismStartHour: 18,
     fullSedentarismEndHour: 7,
     mealDistribution: [0.15, 0.35, 0.44, 0.06], // Probability for small, medium, and big meals
   },
   PonPon: {
-    start_eating_hour: 7,
-    end_eating_hour: 18,
+    name: "PonPon",
+    startEatingHour: 7,
+    stopEatingHour: 18,
     mealInterval: 4,
     fullSedentarismStartHour: 15,
     fullSedentarismEndHour: 8,
     mealDistribution: [0.05, 0.31, 0.64, 0.02],
   },
   Lao: {
-    start_eating_hour: 8,
-    end_eating_hour: 22,
+    name: "Lao",
+    startEatingHour: 8,
+    stopEatingHour: 22,
     mealInterval: 5,
     fullSedentarismStartHour: 18,
     fullSedentarismEndHour: 5,
@@ -50,6 +53,8 @@ class ArchetypeSimulator {
     this.nextMealTime = null;
     this.defaultMealDistribution = null; // To hold default probabilities for reset
     this.mealDistribution = null; // To hold current probabilities during the day
+    this.SimulationRealTime = 6;
+    this.isSimulationStarted = false;
   }
 
   // Method to set the simulation speed dynamically
@@ -58,56 +63,62 @@ class ArchetypeSimulator {
     console.log(
       `Updated TIME_ACCELERATION to: ${this.timeAcceleration} ms per simulated hour, received multiplier: ${multiplier}`
     );
-
+    
     // Restart the interval with the new time acceleration
     if (this.simulationInterval) {
       clearInterval(this.simulationInterval);
-      this.startSimulation(this.currentArchetype); // Restart with updated speed
     }
+    this.simulateWithInterval(); // Restart the interval with updated speed
   }
 
   startSimulation(archetype) {
-    if (this.simulationInterval) {
-      clearInterval(this.simulationInterval);
-    }
-    console.log(`Start simulation received archetype: ${JSON.stringify(archetype, null, 2)}`);
-    // Check if archetype configuration exists
-    // Retrieve configuration by the archetype name
-    const configName = archetypeConfig[archetype.name]; // This is just the name
-    const config = null
-
-    if (config) {
-      // Use the correct archetype configuration
-      const config = archetypeConfig[configName]; // Retrieve the full config object
-      this.startEatingHour = config.startEatingHour;
-      this.stopEatingHour = config.stopEatingHour;
-      this.mealInterval = config.mealInterval;
-      this.defaultMealDistribution = [...config.mealDistribution];
-      this.mealDistribution = [...config.mealDistribution];
-      this.fullSedentarismStartHour = config.fullSedentarismStartHour;
-      this.fullSedentarismEndHour = config.fullSedentarismEndHour;
-
-      console.log(`[${archetype.name}] Initialized values from config:`);
-      console.log(`startEatingHour: ${this.startEatingHour}`);
-      console.log(`stopEatingHour: ${this.stopEatingHour}`);
-      console.log(`mealInterval: ${this.mealInterval}`);
-
-    } else {
-      // Initialize with user-received values if not in archetypeConfig
-      console.log(`Archetype "${archetype.name}" is not defined in archetypeConfig. Initializing with user-provided values.`);
-      this.currentArchetype = archetype;
-      this.defaultMealDistribution = archetype.mealDistribution ? [...archetype.mealDistribution] : [0.25, 0.25, 0.25, 0.25]; // Default to equal distribution
-      this.mealDistribution = [...this.defaultMealDistribution];
-      this.startEatingHour = archetype.startEatingHour ?? 6; // Default to 6 AM
-      this.stopEatingHour = archetype.stopEatingHour ?? 22; // Default to 10 PM
-      this.mealInterval = archetype.mealInterval ?? 2; // Default to 2 hours
-      this.fullSedentarismStartHour = archetype.fullSedentarismStartHour ?? 23; // Default to 11 PM
-      this.fullSedentarismEndHour = archetype.fullSedentarismEndHour ?? 6; // Default to 6 AM
-    }
+    // Initialize only if the simulation hasn't started yet
+    if (!this.isSimulationStarted) {
+      this.isSimulationStarted = true;
   
-    this.simulateArchetype(this.currentArchetype); // Pass config if it exists, otherwise pass archetype
+      console.log(`Start simulation received archetype: ${JSON.stringify(archetype, null, 2)}`);
+      // Retrieve configuration by the archetype name
+      const configName = archetypeConfig[archetype.name]?.name ?? null;
+      console.log(`Archetype received name: ${archetype.name}`);
+
+      if (configName) {
+        // Use the correct archetype configuration
+        const config = archetypeConfig[configName]; // Retrieve the full config object
+        this.currentArchetype = config;
+        this.startEatingHour = config.startEatingHour;
+        this.stopEatingHour = config.stopEatingHour;
+        this.mealInterval = config.mealInterval;
+        this.defaultMealDistribution = [...config.mealDistribution];
+        this.mealDistribution = [...config.mealDistribution];
+        this.fullSedentarismStartHour = config.fullSedentarismStartHour;
+        this.fullSedentarismEndHour = config.fullSedentarismEndHour;
+
+        console.log(`[${archetype.name}] Initialized values from config:`);
+        console.log(`startEatingHour: ${this.startEatingHour}`);
+        console.log(`stopEatingHour: ${this.stopEatingHour}`);
+        console.log(`mealInterval: ${this.mealInterval}`);
+
+      } else {
+        // Initialize with user-received values if not in archetypeConfig
+        console.log(`Archetype "${archetype.name}" is not defined in archetypeConfig. Initializing with user-provided values.`);
+        this.currentArchetype = archetype;
+        this.defaultMealDistribution = archetype.mealDistribution ? [...archetype.mealDistribution] : [0.25, 0.25, 0.25, 0.25]; // Default to equal distribution
+        this.mealDistribution = [...this.defaultMealDistribution];
+        this.startEatingHour = archetype.startEatingHour ?? 6; // Default to 6 AM
+        this.stopEatingHour = archetype.stopEatingHour ?? 22; // Default to 10 PM
+        this.mealInterval = archetype.mealInterval ?? 2; // Default to 2 hours
+        this.fullSedentarismStartHour = archetype.fullSedentarismStartHour ?? 23; // Default to 11 PM
+        this.fullSedentarismEndHour = archetype.fullSedentarismEndHour ?? 6; // Default to 6 AM
+        }
+          // Initialize simulation start time
+          this.simulationStartTime = 6; // Start at 6 AM
+          this.simulationStartTimeReal = Date.now();
+      // Start the simulation interval
+      this.simulateWithInterval();
+  } else {
+    console.log('Simulation is already running. Use setSpeedMultiplier() to adjust speed.');
   }
-  
+}
   stopSimulation() {
     if (this.simulationInterval) {
       clearInterval(this.simulationInterval);
@@ -118,7 +129,7 @@ class ArchetypeSimulator {
 
   simulateArchetype() {
     console.log(`Starting simulation for ${this.currentArchetype.name}.`);
-  
+    
     this.simulationStartTime = 6; // Always start at 6 AM
     this.simulationStartTimeReal = Date.now();
 
@@ -198,7 +209,7 @@ class ArchetypeSimulator {
   
       if (currentSimulatedTime >= this.stopEatingHour || currentSimulatedTime < this.startEatingHour) {
         console.log(
-          `[${this.currentArchetype.name}] Simulated Time: ${this.formatTime(currentSimulatedTime)} - Not eating hours.`
+          `[${this.currentArchetype.name}] Current Simulated Time: ${this.formatTime(currentSimulatedTime)} - Not eating hours.`
         );
         return;
       }
@@ -227,7 +238,7 @@ class ArchetypeSimulator {
       }
   
       console.log(
-        `[${this.currentArchetype.name}] Simulated Time: ${this.formatTime(currentSimulatedTime)} - Waiting for next meal at ${
+        `[${this.currentArchetype.name}] Current Simulated Time: ${this.formatTime(currentSimulatedTime)} - Waiting for next meal at ${
           this.nextMealTime ? this.formatTime(this.nextMealTime) : 'N/A'
         }.`
       );

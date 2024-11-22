@@ -6,17 +6,30 @@ const quotes = [
   {
     text: "Everyone’s toil is for their mouth, yet their appetite is never satisfied.",
     reference: "Ecclesiastes 6:7",
-    writer: "Traditionally attributed to King Solomon, the author of Ecclesiastes.",
   },
   {
     text: "If you find honey, eat just enough—too much of it, and you will vomit.",
     reference: "Proverbs 25:16",
-    writer: "King Solomon is traditionally credited as the primary author of Proverbs.",
   },
   {
     text: "Their destiny is destruction, their god is their stomach, and their glory is in their shame. Their mind is set on earthly things.",
     reference: "Philippians 3:19",
-    writer: "The Apostle Paul, in his letters to the Philippians.",
+  },
+  {
+    text: "If you wish to be self-disciplined, abstain from the excess of food and drink, for gluttony leads to a loss of control.",
+    reference: "Epictetus",
+  },
+  {
+    text: "Eat in moderation, and you will avoid sickness. The wise care for their bodies as a potter cares for clay.",
+    reference: "Dōgen Zenji",
+  },
+  { 
+    text: "Yoga is not for the one who eats too much, nor for the one who fasts too much. It is not for the one who sleeps too much, nor for the one who is always awake. The right way is found in balance.",
+    reference: "Hindu Bhagavad Gita (6.16-17)",
+  },
+  {
+    text: "Excess and deficiency alike are to be avoided; moderation is the true way.",
+    reference: "Confucius (Analects 7.16)",
   },
 ];
 
@@ -56,7 +69,7 @@ const QuoteComponent = () => {
         setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
         setIsVisible(true);
       }, 3000);
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
