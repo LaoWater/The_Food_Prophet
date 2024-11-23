@@ -35,6 +35,17 @@ useEffect(() => {
   console.log('Initializing web worker.');
   workerRef.current = new Worker(new URL('../workers/fullnessWorker.js', import.meta.url));
 
+  // Send archetype data to the worker
+  const sendArchetypeToWorker = (archetype) => {
+    if (workerRef.current) {
+      workerRef.current.postMessage({
+        type: 'INITIALIZE_ARCHETYPE',
+        data: archetype,
+      });
+      console.log('Sent archetype data to worker:', archetype);
+    }
+  };
+
   // Receive updates from the worker
   workerRef.current.onmessage = (event) => {
     const { type, time: workerTime, fullness: workerFullness, data: workerData } = event.data;
@@ -83,6 +94,9 @@ useEffect(() => {
     console.error('Error in web worker:', error);
   };
 
+  // Send the archetype data whenever it changes
+  sendArchetypeToWorker(archetype);
+
   // Cleanup on component unmount
   return () => {
     if (workerRef.current) {
@@ -90,7 +104,7 @@ useEffect(() => {
       console.log('Web worker terminated.');
     }
   };
-}, [isWorkerReady]);
+}, [isWorkerReady, archetype]);
 
 // Function to adjust simulation speed
 const adjustSpeed = (multiplier) => {

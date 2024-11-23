@@ -7,7 +7,7 @@
 // Function to calculate meal contribution using exponential decay
 
 // src/workers/fullnessWorker.js
-
+let currentArchetype = null; // Global variable to store the current archetype
 let time = 0;
 let fullness = 0;
 let meals = []; // Store meal data
@@ -19,7 +19,7 @@ let isPaused = false;
 let intervalId = null; // To store the interval ID
 
 // Function to calculate meal contribution using exponential decay
-const calculateMealContribution = (beta, timeDifference) => {
+const calculateMealContribution = (beta, timeDifference, simulationHour, fullSedentarismStartHour, fullSedentarismEndHour) => {
   const k = 0.3; // Decay constant
   return beta * Math.exp(-k * timeDifference);
 };
@@ -34,6 +34,10 @@ function updateFullness() {
   time = +(time + functionTimeScale).toFixed(5); // Advance time based on the scaled time
   console.log("Current Time (Worker Simulation Hour):", time);
 
+  // Calculate the current simulation time
+  const workerSimulationTime = calculateSimulationTime(time);
+  console.log(`[worker] Current ${currentArchetype.name} Simulation Time:`, workerSimulationTime);
+
   // Remove meals older than 12 simulated hours
   meals = meals.filter(meal => (time - meal.timeEaten) < 12);
 
@@ -42,7 +46,13 @@ function updateFullness() {
   meals.forEach((meal, index) => {
     const timeDifference = (time - meal.timeEaten);
     if (timeDifference > 0) {
-      const contribution = calculateMealContribution(meal.beta, timeDifference);
+      const contribution = calculateMealContribution(
+        meal.beta,
+        timeDifference,
+        workerSimulationTime % 24, // Current simulation hour (0-24)
+        currentArchetype.fullSedentarismStartHour,
+        currentArchetype.fullSedentarismEndHour
+      );
       newFullness += contribution;
       console.log(`Meal ${index + 1} at time (hour) ${meal.timeEaten} contributes ${contribution.toFixed(3)} to fullness.`);
     }
@@ -55,6 +65,21 @@ function updateFullness() {
   // Send the updated time and fullness back to the main thread
   postMessage({ type: 'UPDATE_DATA', time, fullness, data: meals });
 }
+
+// Function to calculate the current simulation time in AM/PM format
+function calculateSimulationTime(time) {
+  const startHour = 6; // Simulation starts at 6AM
+  const totalHours = (startHour + time) % 24; // Total simulation time in 24-hour format
+
+  const hour = Math.floor(totalHours); // Extract the integer hour
+  const minutes = Math.floor((totalHours % 1) * 60); // Extract minutes from the fractional part
+  const formattedHour = hour % 12 || 12; // Convert 24-hour format to 12-hour format
+  const isPM = hour >= 12; // Determine AM/PM
+  const formattedMinutes = minutes.toString().padStart(2, '0'); // Pad minutes with leading zero
+
+  return `${formattedHour}:${formattedMinutes} ${isPM ? 'PM' : 'AM'}`;
+}
+
 
 // Function to start the simulation interval
 function startSimulation() {
@@ -78,7 +103,7 @@ startSimulation();
 
 // Listen for messages from the main thread (e.g., to add meals, reset, pause, resume, set speed)
 onmessage = function(e) {
-  const { type, amount, multiplier } = e.data;
+  const { type, amount, multiplier, data } = e.data;
 
   if (type === 'ADD_MEAL') {
     meals.push({ beta: amount, timeEaten: time });
@@ -104,4 +129,9 @@ onmessage = function(e) {
     functionTimeScale = 0.1 / speedMultiplier - computing_offset; // Update time scale based on speed multiplier
     console.log(`Updated simulation speed: multiplier=${speedMultiplier}, functionTimeScale=${functionTimeScale}`);
   }
+ else if (type === 'INITIALIZE_ARCHETYPE') {
+  // Unpack and log the archetype object for testing
+  currentArchetype = data;
+  console.log('Worker received workerArchetype:', data);
+ }
 };

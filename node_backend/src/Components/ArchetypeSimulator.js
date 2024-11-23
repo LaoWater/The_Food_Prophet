@@ -3,7 +3,7 @@
 const TIME_ACCELERATION = 1000; // 1000 ms = 1 simulated hour
 
 // Configuration for different archetypes
-const archetypeConfig = {
+export const archetypeConfig = {
   ModernMan: {
     name: "ModernMan",
     startEatingHour: 6,

@@ -21,7 +21,7 @@ import StomachFullnessGraph from './Components/StomachFullness_Graph';
 import AddArchetypeModal from './Components/AddArchetypeModal';
 import DigestiveHealth from './Components/DigestiveHealth'; // Import the new component
 import QuoteComponent from './Components/QuoteComponent';
-
+import { archetypeConfig } from './Components/ArchetypeSimulator';
 
 
 // Styled components
@@ -60,7 +60,7 @@ const ContentWrapper = styled.div`
 
 
 function App() {
-  const [archetypes, setArchetypes] = useState([{ name: 'ModernMan' }]);
+  const [archetypes, setArchetypes] = useState([archetypeConfig["ModernMan"]]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -114,7 +114,7 @@ function App() {
                         </CloseButton>
                         <h2>Simulation #{index + 1}</h2>
                         <StomachFullnessGraph
-                          archetype={archetype || 'ModernMan'}
+                          archetype={archetype || archetypeConfig["ModernMan"]}
                         />
                       </GraphWrapper>
                     ))}

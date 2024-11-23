@@ -86,7 +86,7 @@ const GraphRenderer = ({ svgRef, data, time }) => {
       .range([50, 750]);
 
     const yScale = d3.scaleLinear()
-      .domain([0, 1]) // Fullness ranges from 0 to 1
+      .domain([0, 1.1]) // Fullness ranges from 0 to 1
       .range([350, 50]);
 
     // Custom x-axis with time labels in 12-hour format
