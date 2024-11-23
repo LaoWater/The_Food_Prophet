@@ -24,7 +24,7 @@ export const Controls = styled.div`
   button {
     margin: 5px;
     padding: 10px 20px;
-    background-color: ${(props) => props.bgColor || '#4CAF50'};
+    background-color: ${(props) => props.bgcolor || '#4CAF50'};
     color: white;
     border: none;
     border-radius: 5px;
@@ -33,7 +33,7 @@ export const Controls = styled.div`
     cursor: pointer;
 
     &:hover {
-      background-color: ${(props) => props.hoverColor || '#45a049'};
+      background-color: ${(props) => props.hovercolor || '#45a049'};
     }
 
     &:focus {
@@ -139,14 +139,14 @@ export const GraphUI = ({ svgRef, fullness, handleEat, handleReset, isPaused, ha
 
     {/* Meal and Control Buttons */}
     <Controls>
-      <button onClick={() => handleEat(0.1)} bgColor="#2196F3" hoverColor="#1976D2">Small Meal (+0.1)</button>
-      <button onClick={() => handleEat(0.3)} bgColor="#FF5722" hoverColor="#E64A19">Medium Meal (+0.3)</button>
-      <button onClick={() => handleEat(0.7)} bgColor="#FF5722" hoverColor="#E64A19">Big Meal (+0.7)</button>
-      <button onClick={() => handleEat(1.0)} bgColor="#FF5722" hoverColor="#E64A19">Absolute max Limit Meal (+1.0)</button>
-      <button onClick={handlePauseResume} bgColor="#9E9E9E" hoverColor="#757575">
+      <button onClick={() => handleEat(0.1)} bgcolor="#2196F3" hovercolor="#1976D2">Small Meal (+0.1)</button>
+      <button onClick={() => handleEat(0.3)} bgcolor="#FF5722" hovercolor="#E64A19">Medium Meal (+0.3)</button>
+      <button onClick={() => handleEat(0.7)} bgcolor="#FF5722" hovercolor="#E64A19">Big Meal (+0.7)</button>
+      <button onClick={() => handleEat(1.0)} bgcolor="#FF5722" hovercolor="#E64A19">Absolute max Limit Meal (+1.0)</button>
+      <button onClick={handlePauseResume} bgcolor="#9E9E9E" hovercolor="#757575">
         {isPaused ? 'Resume' : 'Pause'}
       </button>
-      <button onClick={handleReset} bgColor="#f44336" hoverColor="#d32f2f">Reset</button>
+      <button onClick={handleReset} bgcolor="#f44336" hovercolor="#d32f2f">Reset</button>
     </Controls>
 
     {/* Fullness Display */}

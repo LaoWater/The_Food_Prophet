@@ -124,6 +124,7 @@ const adjustSpeed = (multiplier) => {
     };
   }, [isWorkerReady, isPaused, archetype]);
 
+  // 3.1 Initialize the Archetype simulator Speed multiplier - to control simulation speed
   useEffect(() => {
     if (simulatorRef.current && !isPaused) {
       simulatorRef.current.setSpeedMultiplier(speedMultiplier);

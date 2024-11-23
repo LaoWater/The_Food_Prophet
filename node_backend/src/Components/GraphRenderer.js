@@ -153,7 +153,7 @@ const GraphRenderer = ({ svgRef, data, time }) => {
       .style('fill', 'blue')
       .attr('text-anchor', 'start');
 
-    console.log('Graph updated successfully.');
+    //console.log('Graph updated successfully.');
   }, [data, time, svgRef]);
 
   return null; // This component does not render anything directly

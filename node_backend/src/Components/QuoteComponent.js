@@ -24,7 +24,7 @@ const quotes = [
     reference: "Dōgen Zenji",
   },
   { 
-    text: "Yoga is not for the one who eats too much, nor for the one who fasts too much. It is not for the one who sleeps too much, nor for the one who is always awake. The right way is found in balance.",
+    text: "Yoga is not for the one who eats too much, nor for the one who fasts too much. The right way is found in balance.",
     reference: "Hindu Bhagavad Gita (6.16-17)",
   },
   {

@@ -45,6 +45,7 @@ const timeAdjustmentDistribution = [
 
 class ArchetypeSimulator {
   constructor(worker) {
+    this.defaultTimeAcceleration = TIME_ACCELERATION;
     this.worker = worker;
     this.currentArchetype = null;
     this.simulationInterval = null;
@@ -55,10 +56,15 @@ class ArchetypeSimulator {
     this.mealDistribution = null; // To hold current probabilities during the day
     this.SimulationRealTime = 6;
     this.isSimulationStarted = false;
+    this.currentEpoch_startTime = Date.now();
+    this.epochs = {}; // Object to track elapsed real time per speed
+
   }
 
   // Method to set the simulation speed dynamically
   setSpeedMultiplier(multiplier) {
+    if (this.isSimulationStarted)
+      this.updateEpoch();
     this.timeAcceleration = 1000 * (multiplier / 3600); // Adjust time acceleration based on multiplier
     console.log(
       `Updated TIME_ACCELERATION to: ${this.timeAcceleration} ms per simulated hour, received multiplier: ${multiplier}`
@@ -305,11 +311,92 @@ class ArchetypeSimulator {
     return 0; // Fallback if probabilities don’t sum to exactly 1
   }
 
-  getCurrentSimulatedTime() {
-    const elapsedRealTime = Date.now() - this.simulationStartTimeReal; // in ms
-    const elapsedSimulatedHours = elapsedRealTime / this.timeAcceleration;
-    return (this.simulationStartTime + elapsedSimulatedHours) % 24;
+  // Epochs keep track of elapsed time per simulation speed - so that it can be used to calculate accurate simulated time
+  updateEpoch() {
+    const currentRealTime = Date.now();
+    const elapsedRealTime = currentRealTime - this.currentEpoch_startTime; // in ms
+    
+    if (!this.timeAcceleration) {
+      this.timeAcceleration = TIME_ACCELERATION;
+    }
+
+    if (elapsedRealTime < 0) {
+      console.warn("gamma Warning: Current real time is earlier than epoch start time.");
+      return;
+    }
+
+    // Accumulate elapsed real time for the current timeAcceleration
+    if (this.epochs.hasOwnProperty(this.timeAcceleration)) {
+      this.epochs[this.timeAcceleration] += elapsedRealTime;
+    } else {
+      this.epochs[this.timeAcceleration] = elapsedRealTime;
+    }
+
+    // Update the start time for the next epoch
+    this.currentEpoch_startTime = currentRealTime;
+
+    // // Consolidated debug logs
+    // console.debug(`
+    //   gamma updateEpoch() called
+    //   gamma Current Real Time: ${currentRealTime}
+    //   gamma Current Epoch Start Time: ${this.currentEpoch_startTime}
+    //   gamma Elapsed Real Time since last epoch (ms): ${elapsedRealTime}
+    //   gamma Updated epochs[${this.timeAcceleration}] to ${this.epochs[this.timeAcceleration]} ms
+    //   gamma Updated currentEpoch_startTime to ${this.currentEpoch_startTime}
+    //   gamma -------------------------------------------
+    // `);
   }
+
+
+  
+  getCurrentSimulatedTime() {
+    // Calculate simulated time for current Epoch
+    // const normalization_factor = this.defaultTimeAcceleration / this.timeAcceleration;
+
+    const currentRealTime = Date.now(); // Current real time
+
+    const currentEpochElapsedRealTime = currentRealTime - this.currentEpoch_startTime; // Elapsed real time (ms)
+
+    const currentEpochElapsedSimulatedHours = currentEpochElapsedRealTime / this.timeAcceleration;
+
+    const currentEpochSimulatedTime = this.simulationStartTime + currentEpochElapsedSimulatedHours;
+
+    // Integrate previous Epochs on different time accelerations
+    const parsedEpochs = Object.entries(this.epochs).reduce((result, [key, value]) => {
+        if (value != null && value !== undefined && value !== this.timeAcceleration && value !== 1) {
+            let epoch_normalization_factor = this.defaultTimeAcceleration / key;
+            result[key] = (epoch_normalization_factor * value) / this.defaultTimeAcceleration;
+        }
+        return result;
+    }, {});
+
+    // Sum all values in parsedEpochs and add to the current simulated time
+    const parsedEpochsSum = Object.values(parsedEpochs).reduce((sum, value) => sum + value, 0);
+
+    const totalSimulatedTime = (parsedEpochsSum + currentEpochSimulatedTime) % 24;
+
+    // // Logs
+    // console.log(`phi normalization_factor: ${normalization_factor}`);
+    // console.log(`phi currentRealTime: ${currentRealTime}`);
+    // console.log(`phi currentEpochElapsedRealTime: ${currentEpochElapsedRealTime}`);
+    // console.log(`phi currentEpochElapsedSimulatedHours: ${currentEpochElapsedSimulatedHours}`);
+    // console.log(`phi currentEpochSimulatedTime (before mod): ${currentEpochSimulatedTime}`);
+    // Object.entries(this.epochs).forEach(([key, value]) => {
+    //     if (value != null && value !== undefined && value !== this.timeAcceleration && value !== 1) {
+    //         let epoch_normalization_factor = this.defaultTimeAcceleration / key;
+    //         console.log(`phi epoch[${key}] normalization_factor: ${epoch_normalization_factor}, value: ${value}`);
+    //         console.log(`phi epoch[${key}] contribution: ${(epoch_normalization_factor * value) / this.defaultTimeAcceleration}`);
+    //     }
+    // });
+    // console.log(`phi Parsed epochs:`, parsedEpochs);
+    // console.log(`phi Parsed epochs total sum: ${parsedEpochsSum}`);
+    // console.log(`phi totalSimulatedTime (after mod): ${totalSimulatedTime}`);
+
+    return totalSimulatedTime;
+}
+
+  
+  
 
   formatTime(time) {
     const hour = Math.floor(time);
