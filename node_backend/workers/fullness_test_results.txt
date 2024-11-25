@@ -1,0 +1,126 @@
+FULLNESS CALCULATION TEST RESULTS
+===============================
+Testing Date: 11/24/2024, 3:35:14 AM
+Base Decay Constant: 0.3
+Sedentary Factor: 0.7
+Circadian Amplitude: 0.2
+
+
+SCENARIO 1: Morning Breakfast (8:00 AM)
+----------------------------------------
+Initial Fullness (beta): 100
+Sedentary Period: 9:00 AM - 5:00 PM
+Tracking Period: 4 hours
+
+Time: 8:00 (0 hours elapsed)
+Fullness Level: 100.00%
+Circadian Factor: 1.100
+Sedentary Factor: 1
+Effective Decay Rate: 0.330
+----------------------------------------
+
+Time: 9:00 (1 hours elapsed)
+Fullness Level: 78.69%
+Circadian Factor: 1.141
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.240
+----------------------------------------
+
+Time: 10:00 (2 hours elapsed)
+Fullness Level: 61.09%
+Circadian Factor: 1.173
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.246
+----------------------------------------
+
+Time: 12:00 (4 hours elapsed)
+Fullness Level: 36.49%
+Circadian Factor: 1.200
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.252
+----------------------------------------
+
+
+SCENARIO 2: Late Night Snack (11:00 PM)
+----------------------------------------
+Initial Fullness (beta): 80
+Sedentary Period: 9:00 AM - 5:00 PM (not applicable)
+Tracking Period: 2 hours
+
+Time: 23:00 (0 hours elapsed)
+Fullness Level: 80.00%
+Circadian Factor: 0.807
+Sedentary Factor: 1
+Effective Decay Rate: 0.242
+----------------------------------------
+
+Time: 0:00 (1 hours elapsed)
+Fullness Level: 62.93%
+Circadian Factor: 0.800
+Sedentary Factor: 1
+Effective Decay Rate: 0.240
+----------------------------------------
+
+Time: 1:00 (2 hours elapsed)
+Fullness Level: 49.30%
+Circadian Factor: 0.807
+Sedentary Factor: 1
+Effective Decay Rate: 0.242
+----------------------------------------
+
+
+SCENARIO 3: Office Lunch (12:00 PM)
+----------------------------------------
+Initial Fullness (beta): 100
+Sedentary Period: 9:00 AM - 5:00 PM
+Tracking Period: 4 hours
+
+Time: 12:00 (0 hours elapsed)
+Fullness Level: 100.00%
+Circadian Factor: 1.200
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.252
+----------------------------------------
+
+Time: 13:00 (1 hours elapsed)
+Fullness Level: 77.84%
+Circadian Factor: 1.193
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.251
+----------------------------------------
+
+Time: 14:00 (2 hours elapsed)
+Fullness Level: 61.09%
+Circadian Factor: 1.173
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.246
+----------------------------------------
+
+Time: 16:00 (4 hours elapsed)
+Fullness Level: 39.69%
+Circadian Factor: 1.100
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.231
+----------------------------------------
+
+
+SCENARIO 4: Active vs Sedentary Comparison (2:00 PM)
+----------------------------------------
+Initial Fullness (beta): 100
+Time Elapsed: 2 hours
+Comparing same meal for active and sedentary person
+
+ACTIVE PERSON:
+Fullness Level: 49.46%
+Circadian Factor: 1.173
+Sedentary Factor: 1
+Effective Decay Rate: 0.352
+
+SEDENTARY PERSON:
+Fullness Level: 61.09%
+Circadian Factor: 1.173
+Sedentary Factor: 0.7
+Effective Decay Rate: 0.246
+
+Difference in Fullness: 11.63%
+----------------------------------------
