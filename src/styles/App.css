@@ -1,0 +1,31 @@
+.AppContainer {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .AppContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(to bottom, rgba(51, 51, 51, 1), rgba(51, 51, 51, 0.7), rgba(0, 0, 0, 0.7)),
+      url('/public/static/ReactPage_FoodProphet/white_lotus.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: brightness(1) blur(0px);
+    z-index: -1;
+  }
+  
+  .ContentWrapper {
+    margin-top: 70px;
+    text-align: center;
+  }
+  
