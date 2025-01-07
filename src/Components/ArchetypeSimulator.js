@@ -4,8 +4,17 @@ const TIME_ACCELERATION = 1000; // 1000 ms = 1 simulated hour
 
 // Configuration for different archetypes
 export const archetypeConfig = {
+  TheCentenarian: {
+    name: "Centenarian",
+    startEatingHour: 7,
+    stopEatingHour: 17,
+    mealInterval: 2.87,
+    fullSedentarismStartHour: 17,
+    fullSedentarismEndHour: 7,
+    mealDistribution: [0.12, 0.41, 0.47, 0.02],
+  },
   ModernMan: {
-    name: "ModernMan",
+    name: "Modern Man",
     startEatingHour: 6,
     stopEatingHour: 22,
     mealInterval: 1.5,
@@ -30,6 +39,15 @@ export const archetypeConfig = {
     fullSedentarismStartHour: 18,
     fullSedentarismEndHour: 5,
     mealDistribution: [0.05, 0.21, 0.58, 0.16],
+  },
+  Monk: {
+    name: "Monk",
+    startEatingHour: 7,
+    stopEatingHour: 17,
+    mealInterval: 4.5,
+    fullSedentarismStartHour: 19,
+    fullSedentarismEndHour: 7,
+    mealDistribution: [0.05, 0.31, 0.64, 0.02],
   },
 };
 

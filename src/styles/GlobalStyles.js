@@ -2,24 +2,30 @@
 
 import { createGlobalStyle } from 'styled-components';
 
+
 const GlobalStyles = createGlobalStyle`
   /* CSS Reset */
   *, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+
   }
 
   /* Base Styles */
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    background-image: 
+      linear-gradient(to bottom, rgba(51, 51, 51, 1), rgba(51, 51, 51, 0.7), rgba(0, 0, 0, 0.7)),
+      url('/static/ReactPage_FoodProphet/white_lotus.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: brightness(1) blur(0px);
     color: #333;
     min-height: 100vh;
-    display: flex;
     justify-content: center;
     align-items: center;
+    zoom: 0.73;
   }
+
 
   button {
     cursor: pointer;

@@ -35,4 +35,35 @@ export const CloseButton = styled.button`
   &:hover {
     color: #ff0000;
   }
+
+  
+    /* Responsive styling for mobile */
+  @media (max-width: 768px) {
+  font-size: 2.55rem;
+  }
+`;
+
+
+
+
+// Defaults Button
+
+export const ArchetypeList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+`;
+
+export const ArchetypeItem = styled.li`
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
+// Styled Components (moved outside the App component)
+export const ModalContent = styled.div`
+  padding: 20px;
 `;

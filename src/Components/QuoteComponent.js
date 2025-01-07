@@ -36,8 +36,8 @@ const quotes = [
 // Styled Components
 const QuoteContainer = styled.div`
   position: absolute;
-  top: 100px;
-  right: 20px;
+  top: 5%;
+  right: 11%;
   max-width: 400px;
   font-family: 'Georgia', serif;
   font-size: 1.2rem;
@@ -49,12 +49,28 @@ const QuoteContainer = styled.div`
   font-style: italic;
   transition: opacity 2.2s ease-in-out;
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+
+  @media (max-width: 768px) {
+    position: relative; /* Move to a relative position */
+    top: 30px; /* Adjust top margin for spacing */
+    right: auto; /* Remove right alignment */
+    max-width: 90%; /* Allow the quote to take more width */
+    margin: 0 auto; /* Center-align for mobile */
+    text-align: center; /* Center the text */
+    font-size: 1rem; /* Reduce font size for smaller screens */
+    padding: 8px 12px; /* Adjust padding for compact look */
+    
+  }
 `;
 
 const VerseReference = styled.span`
   font-size: 1rem;
   font-style: normal;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+  font-size: 0.9rem; /* Adjust size for smaller screens */
+  }
 `;
 
 // Quote Component
@@ -84,3 +100,6 @@ const QuoteComponent = () => {
 };
 
 export default QuoteComponent;
+
+
+

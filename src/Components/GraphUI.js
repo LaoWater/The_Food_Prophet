@@ -7,7 +7,7 @@ import GraphRenderer from './GraphRenderer';
 // Styled components
 export const GraphContainer = styled.div`
   text-align: center;
-  margin: 20px;
+  margin: 25px;
   background: white;
   padding: 20px;
   border-radius: 15px;

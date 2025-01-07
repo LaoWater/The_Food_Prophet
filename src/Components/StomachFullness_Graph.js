@@ -5,7 +5,7 @@ import GraphUI from './GraphUI';
 import { ArchetypeSimulator } from './ArchetypeSimulator'; // Ensure this path is correct
 import usePageActivity from '../hooks/usePageActivity';
 
-const StomachFullnessGraph = ({ archetype = { name: 'ModernMan' } }) => {
+const StomachFullnessGraph = ({ archetype = { name: 'Modern Man' } }) => {
   const [isPaused, setIsPaused] = useState(false); // Pause state
   const [isWorkerReady, setIsWorkerReady] = useState(false); // Worker readiness
   const [fullness, setFullness] = useState(0);

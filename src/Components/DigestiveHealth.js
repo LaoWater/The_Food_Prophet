@@ -8,12 +8,7 @@ const ComingSoonContainer = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    rgba(51, 51, 51, 1),
-    rgba(0, 0, 0, 0.8)
-  );
-  color: white;
+  background-color: rgba(51, 51, 51, 0.45); /* Semi-transparent dark grey background */
   text-align: center;
   font-family: 'Source Sans Pro', sans-serif;
 `;
