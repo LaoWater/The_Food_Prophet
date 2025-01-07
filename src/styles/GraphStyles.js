@@ -7,7 +7,7 @@ export const GraphsContainer = styled.div`
   gap: 20px;
   justify-items: center; // Center-align the graphs horizontally
   align-items: ${({ graphCount }) => (graphCount === 1 ? "center" : "start")}; // Center-align vertically if one graph
-  margin-top: 50px;
+  margin-top: 30px;
   min-height: ${({ graphCount }) => (graphCount === 1 ? "60vh" : "auto")}; // Add height to vertically center the graph
 
 

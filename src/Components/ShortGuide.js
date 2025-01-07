@@ -6,7 +6,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 // Styled Info Icon
 const InfoIcon = styled.div`
   position: absolute;
-  top: 5rem; /* Adjust as needed */
+  top: 7rem; /* Adjust as needed */
   left: 50%;
   transform: translateX(-50%);
   font-size: 1.5rem;
@@ -33,8 +33,8 @@ const InfoIcon = styled.div`
 
     /* Responsive styling for mobile */
   @media (max-width: 768px) {
-  top: 0.3rem; /* Adjust as needed */
-  left: 20%;
+  top: 1.44rem; /* Adjust as needed */
+  left: 7%;
   }
 `;
 
@@ -46,7 +46,6 @@ const Tooltip = styled.div`
   left: 50%;
   transform: translateX(-50%);
   max-width: 300px;
-  min-width: 70%;
   padding: 10px;
   background: rgba(0, 0, 0, 0.9); /* Slightly darker for visibility */
   color: white;
@@ -65,6 +64,10 @@ const Tooltip = styled.div`
     font-weight: bold;
     color: #00e676; /* Optional: Add a color to emphasize strong text */
   }
+    /* Responsive styling for mobile */
+  @media (max-width: 768px) {
+    min-width: 70%;
+}
 `;
 
 const InfoWithTooltip = () => {

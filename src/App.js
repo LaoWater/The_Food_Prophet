@@ -15,9 +15,8 @@ import {
 import {
   AddButton,
   CloseButton,
-  ArchetypeItem,
-  ArchetypeList,
-  ModalContent
+  ClearButton,
+  ButtonContainer
 } from './styles/ButtonStyles';
 import StomachFullnessGraph from './Components/StomachFullness_Graph';
 import AddArchetypeModal from './Components/AddArchetypeModal';
@@ -28,7 +27,7 @@ import InfoWithTooltip from './Components/ShortGuide';
 import './styles/App.css';
 import GlobalStyles from './styles/GlobalStyles';
 import TopLeftDropdown from './styles/TopLeftDropdown';
-import Modal from 'react-modal'; // Import Modal
+import DefaultsModal from './Components/DefaultsModals';
 
 
 
@@ -66,52 +65,9 @@ function App() {
     setArchetypes((prevArchetypes) => [...prevArchetypes, selectedArchetype]); // Add selected archetype to state
   };
 
-  const DefaultsModal = ({ isOpen, onClose, onSelect }) => {
-    const archetypes = Object.keys(archetypeConfig).map(key => archetypeConfig[key]);
 
-    return (
-      <Modal
-        isOpen={isOpen}
-        onRequestClose={onClose}
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1000,
-          },
-          content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            borderRadius: '8px',
-            maxWidth: '500px',
-            backgroundColor: 'white',
-          },
-        }}
-      >
-        <ModalContent>
-          <h2>Default Archetypes</h2>
-          <p>Select a default archetype to pre-fill the simulator:</p>
-          <ArchetypeList>
-            {archetypes.map((archetype) => (
-              <ArchetypeItem
-                key={archetype.name}
-                onClick={() => {
-                  onSelect(archetype);
-                  onClose();
-                }}
-              >
-                {archetype.name}
-              </ArchetypeItem>
-            ))}
-          </ArchetypeList>
-          <button onClick={onClose}>Close</button>
-        </ModalContent>
-      </Modal>
-    );
+  const handleClearAll = () => {
+    setArchetypes([]); // Set archetypes state to an empty array
   };
 
 
@@ -141,12 +97,21 @@ function App() {
               element={
                 <>
                   <InfoWithTooltip />
-                  <AddButton onClick={handleOpenModal}>Add Archetype</AddButton>
-                  <AddButton onClick={handleOpenModal}>Defaults</AddButton>
+                  <ButtonContainer> {/* Wrap buttons in a container */}
+                        <AddButton onClick={handleOpenModal}>Add Archetype</AddButton>
+                        <AddButton onClick={handleOpenDefaultsModal}>Defaults</AddButton>
+                        <ClearButton onClick={handleClearAll}>Clear All</ClearButton>
+                    </ButtonContainer>
+
                   <AddArchetypeModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
                     onSave={handleSaveArchetype}
+                  />
+                  <DefaultsModal // Correct placement of DefaultsModal
+                    isOpen={isDefaultsModalOpen}
+                    onClose={handleCloseDefaultsModal}
+                    onSelect={handleSelectDefault}
                   />
 
                 <GraphsContainer graphCount={archetypes.length}>
