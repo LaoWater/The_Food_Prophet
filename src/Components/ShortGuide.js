@@ -64,6 +64,11 @@ const Tooltip = styled.div`
     font-weight: bold;
     color: #00e676; /* Optional: Add a color to emphasize strong text */
   }
+
+    strong-white {
+    font-weight: bold;
+    color: white; /* Optional: Add a color to emphasize strong text */
+  }
     /* Responsive styling for mobile */
   @media (max-width: 768px) {
     min-width: 70%;
@@ -86,18 +91,22 @@ const InfoWithTooltip = () => {
       {/* Tooltip */}
       <Tooltip isVisible={showTooltip}>
         <p>
+        <strong-white>
           We are showcasing by default the Modern Man & Centenarian Archetypes. 
           <br />
-          <br />*Centenarian is built upon observing the eating patterns on Earth's
-          <strong-green> "Blue Zones"</strong-green>, the few places where life expectancy
-          is striving towards 100 years.
+          <br />*Centenarian is built upon observing the eating patterns on Earth's</strong-white>
+          <strong-green> "Blue Zones"</strong-green><strong-white>, the few places where life expectancy
+          is striving towards 100 years. </strong-white>
         </p>
-        <p>
-          Feel free to create your own, play around, explore, and reflect.
+        <p> <strong-white>
+          Feel free to create your own, play around, explore, and reflect. 
+          </strong-white>
         </p>
-        <p>
+        <p> 
+          <strong-white>
           For a completely manual simulation, use the Archetype Name <strong>"Manual"</strong>.
           The Web Workers will be turned off.
+          </strong-white>
         </p>
       </Tooltip>
     </div>

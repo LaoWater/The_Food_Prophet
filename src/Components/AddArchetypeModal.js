@@ -1,12 +1,14 @@
 // src/components/AddArchetypeModal.js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import styled from 'styled-components';
+
 
 const ModalBackground = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
@@ -14,6 +16,8 @@ const ModalBackground = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  width: 100%; /* Ensures it covers the viewport */
+  height: 100%;
 `;
 
 const ModalContent = styled.div`
@@ -61,6 +65,12 @@ const Slider = styled.input`
     #2196F3 ${(props) => props.value * 100}%,
     #ddd ${(props) => props.value * 100}%
   );
+
+    /* Ensure touch responsiveness */
+  touch-action: pan-y; /* Allow vertical panning */
+  -webkit-appearance: none; /* WebKit fix */
+  -moz-appearance: none; /* Firefox fix */
+
 
   &::-webkit-slider-thumb {
     appearance: none;
@@ -154,6 +164,7 @@ const AddArchetypeModal = ({ isOpen, onClose, onSave }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+
   const handleInputChange = (field, value) => {
     setNewArchetype((prev) => ({
       ...prev,
@@ -189,11 +200,42 @@ const AddArchetypeModal = ({ isOpen, onClose, onSave }) => {
     setIsLoading(false);
     onClose();
   };
+  // Allow closing Modal with Escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose(); // Trigger onClose when Esc key is pressed
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
+  // Detect mobile environment using viewport width
+  const isMobile = window.innerWidth <= 768; // Adjust breakpoint as needed
+  const getMobileScrollTop = () => Math.max(
+    document.body.scrollTop,
+    document.documentElement.scrollTop,
+    window.pageYOffset || 0
+);
+
+  const scrollY = window.scrollY;
+  const topAdjustedY = isMobile 
+    ? getMobileScrollTop + window.innerHeight// For mobile
+    : scrollY + window.innerHeight; // Adjust for desktop (e.g., top padding)
+  
+
   return (
-    <ModalBackground>
+    
+    <ModalBackground style = {{ top: `${topAdjustedY}px`}}>
       {isLoading && (
         <LoadingOverlay>
           <LoadingImage />
