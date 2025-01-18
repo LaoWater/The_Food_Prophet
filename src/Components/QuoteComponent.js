@@ -36,7 +36,7 @@ const quotes = [
 // Styled Components
 const QuoteContainer = styled.div`
   position: absolute;
-  top: 5%;
+  // top: 5%;
   right: 11%;
   max-width: 400px;
   font-family: 'Georgia', serif;

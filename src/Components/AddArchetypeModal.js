@@ -67,7 +67,7 @@ const Slider = styled.input`
   );
 
     /* Ensure touch responsiveness */
-  touch-action: pan-y; /* Allow vertical panning */
+  touch-action: pan-x pan-y; 
   -webkit-appearance: none; /* WebKit fix */
   -moz-appearance: none; /* Firefox fix */
 
