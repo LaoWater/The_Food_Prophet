@@ -65,6 +65,8 @@ npm start
 > ***For major changes, please open an issue to discuss proposed changes.***
 
 ## This project is licensed under the MIT License.
-**See the LICENSE file for details.**
+**See the [MIT License](LICENSE) file for details.**
 
+## Code of Conduct
 
+Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
