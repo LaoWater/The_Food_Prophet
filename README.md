@@ -3,10 +3,10 @@
 ## Overview
 **Food Prophet** is a **stand-alone React application** built and deployed within the **Django framework** of Project Re-Connect.
 
-It leverages advanced **probabilistic modeling** to simulate digestion patterns for various archetypes (e.g., "Modern Man") while allowing users to interactively visualize and manipulate time, meals, and simulated digestion on a responsive graph.
-
-## Repository Link
+### Project Re-Connect Repository Link
 [![GitHub Repository](https://img.shields.io/badge/Repository-Visit-blue?logo=github)](https://github.com/LaoWater/reconnectv2)
+
+It leverages advanced **probabilistic modeling** to simulate digestion patterns for various archetypes (e.g., "Modern Man") while allowing users to interactively visualize and manipulate time, meals, and simulated digestion on a responsive graph.
 
 ---
 
@@ -24,7 +24,6 @@ It leverages advanced **probabilistic modeling** to simulate digestion patterns 
 3. **Web Workers for Asynchronous Computation**
    - Handles digestion simulations in the background for a smooth, non-blocking user experience.
    - Tasks include:
-     - Data persistence to `localStorage`.
      - Real-time graph updates.
      - Simulation adjustments (pausing, resetting, adding meals).
 
@@ -43,8 +42,6 @@ It leverages advanced **probabilistic modeling** to simulate digestion patterns 
 ### Prerequisites
 Ensure you have the following installed:
 - **Node.js** (v16+ recommended)
-- **Django** (v4.0+)
-- **Python** (v3.9+)
 
 ### Steps
 
@@ -62,10 +59,10 @@ npm start
 
 
 # Contributions are welcome!
-# Please fork the repository, make your changes, and submit a pull request.
-# For major changes, please open an issue to discuss proposed changes.
+**Please fork the repository, make your changes, and submit a pull request.**
+***For major changes, please open an issue to discuss proposed changes.***
 
 # This project is licensed under the MIT License.
-# See the LICENSE file for details.
+**See the LICENSE file for details.**
 
 
