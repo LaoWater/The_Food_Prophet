@@ -3,7 +3,7 @@
 ## Overview
 **Food Prophet** is a **stand-alone React application** built and deployed within the **Django framework** of Project Re-Connect.
 
-### Project Re-Connect Repository Link
+***Project Re-Connect Repository Link***
 [![GitHub Repository](https://img.shields.io/badge/Repository-Visit-blue?logo=github)](https://github.com/LaoWater/reconnectv2)
 
 It leverages advanced **probabilistic modeling** to simulate digestion patterns for various archetypes (e.g., "Modern Man") while allowing users to interactively visualize and manipulate time, meals, and simulated digestion on a responsive graph.
