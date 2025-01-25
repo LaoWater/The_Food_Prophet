@@ -61,7 +61,8 @@ npm start
 
 ## Contributions are welcome!
 **Please fork the repository, make your changes, and submit a pull request.**  
-***For major changes, please open an issue to discuss proposed changes.***
+> [!NOTE]
+> ***For major changes, please open an issue to discuss proposed changes.***
 
 ## This project is licensed under the MIT License.
 **See the LICENSE file for details.**
